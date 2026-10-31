@@ -108,18 +108,26 @@ html,body{overflow:hidden!important}
 .refresh-btn{font-size:22px;line-height:1;font-weight:600}
 @media(orientation:landscape){.top-actions{gap:7px}.refresh-btn{font-size:16px}}
 
-/* v17: keep controls away from iPhone landscape home-indicator edge. */
-@media (orientation:landscape){
- .app,.component-open .app{
-  padding-left:max(12px, calc(env(safe-area-inset-left, 0px) + 12px))!important;
-  padding-right:max(46px, calc(env(safe-area-inset-right, 0px) + 22px))!important;
- }
- .components.visible{min-width:0!important}
- .components button{min-width:0!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-}
+/* v17: tuner uses the existing grid area without scrolling. */
+.judge-controls{display:flex;align-items:center;gap:8px;flex:none;min-height:29px}
+#judgeToggle{border:1px solid var(--accent);background:#20323d;color:#f3f6fc;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+#judgeToggle.active{background:#176e72}
+#judgeStatus{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.judge-panel{min-height:0;flex:1 1 0;border:1px solid #4c6c7c;border-radius:10px;background:#1b2939;padding:10px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;overflow:hidden}
+.judge-panel[hidden]{display:none!important}
+.judge-pitch{font-size:clamp(17px,4dvh,32px);font-weight:800;text-align:center}
+.judge-role{font-size:clamp(10px,2dvh,13px);color:#b9d5db;text-align:center}
+.judge-meter{width:min(100%,460px);height:17px;border-radius:12px;position:relative;background:linear-gradient(90deg,#426da7,#52a8b0 33%,#70b99c 45%,#70b99c 55%,#d7a55c 72%,#b55d66);margin-top:6px}
+.judge-zero{position:absolute;left:50%;height:23px;top:-3px;border-left:2px solid white}
+.judge-needle{position:absolute;left:50%;top:-6px;height:29px;border-left:4px solid white;filter:drop-shadow(0 0 2px black);transition:left .13s}
+.judge-scale{display:flex;justify-content:space-between;width:min(100%,460px);font-size:10px;color:#aebccd}
+.judge-cents{font-size:clamp(18px,4.4dvh,32px);font-weight:800}
+.judge-message{font-size:11px;color:#c7d8e6;text-align:center}
+body.judging .notes,body.judging .section{display:none!important}
+@media(orientation:landscape){.judge-controls{min-height:21px}#judgeToggle{padding:2px 8px;font-size:10px}.judge-panel{padding:2px 12px;gap:1px}.judge-meter{height:10px;margin-top:2px}.judge-zero{height:15px;top:-2px}.judge-needle{height:19px;top:-4px}.judge-cents{font-size:16px}.judge-pitch{font-size:16px}.judge-role,.judge-message{font-size:9px}}
 </style>
 </head>
-<body><main class="app"><div class="topbar"><div class="badge">PROTOTYPE v17 · 更新履歴</div><div class="top-actions"><button type="button" id="refreshBtn" class="info-btn refresh-btn" aria-label="アプリを更新" title="アプリを更新">↻</button><button type="button" id="infoBtn" class="info-btn" aria-label="更新履歴とアプリ情報を表示" aria-haspopup="dialog">ⓘ</button></div></div><div class="now-row"><button id="now" class="now" aria-label="再生中の音。タップして停止"><div id="nowPitch" class="pitch">停止中</div><div id="nowSub" class="sub">音名を選んで再生 ／ 再生中はここをタップして停止</div></button><button id="enharmonic" class="enharmonic" type="button" hidden aria-label="異名同音に切り替え"></button></div><nav class="switches" aria-label="再生モード" id="modes"><button data-mode="single">単音</button><button data-mode="major">長3</button><button data-mode="minor">短3</button></nav><nav class="switches" aria-label="音律" id="tunings"><button data-tuning="just">純正律</button><button data-tuning="equal">平均律</button></nav><div id="audioStatus" role="status" aria-live="polite" style="font-size:13px;color:#ffd88b;min-height:1.4em;margin:4px 0"></div><label class="vol">音量 <input id="volume" type="range" min="0" max="100" value="45"><span id="volumeLabel">45%</span></label><div class="section"><strong>音を選ぶ</strong><span>実音・全25音／異名同音を併記</span></div><div class="notes" id="notes"></div><div class="aux"><button id="componentBtn" aria-pressed="false">構成音を操作</button></div><div id="components" class="components"></div><details class="footer"><summary>試作品について</summary><p>これは操作確認用の試作品です。音源はA＝442 Hzを基準とするWeb Audio APIによる仮の電子音です。完成版では録音したWAV音源を使用します。音が鳴らない場合はOneDriveのプレビューではなくSafariで開いてください。iPhoneの消音モードや音量もご確認ください。音名の①②③は音域を示します。</p></details></main><dialog id="historyDialog" aria-labelledby="historyTitle"><div class="dialog-head"><strong id="historyTitle">更新履歴</strong><button id="closeHistory" type="button" aria-label="閉じる">×</button></div><div class="history-entry"><b>Ver. 17</b><p>スマートフォン横画面で第3音などの操作ボタンがホームインジケータと重ならないよう、画面右側に安全な余白を確保しました。スクロール禁止は維持しています。</p></div><div class="history-entry"><b>Ver. 16</b><p>スマートフォンのブラウザで更新操作が見つからない場合に備え、画面右上に更新ボタン（↻）を追加しました。更新時はキャッシュを避けるためURLに更新用の値を付けます。</p></div><div class="history-entry"><b>Ver. 15</b><p>スマートフォン横画面で下端のジェスチャー操作と干渉しないよう、音量バーを音名ボタンの上に移動しました。スクロール禁止とA＝442 Hzは維持しています。</p></div><div class="history-entry"><b>Ver. 14</b><p>縦・横画面ともスクロールを禁止し、横画面では25音のボタンが画面内に収まるよう配置を調整しました。</p></div><div class="history-entry"><b>Ver. 13</b><p>スマートフォン横向き表示で音名ボタンが重なってしまう問題を修正しました。画面が狭い場合はボタンの高さを確保し、ボタンの文字の重なりを軽減しました。</p></div><div class="history-entry"><b>Ver. 12</b><p>仮音源の基準ピッチをA＝440 HzからA＝442 Hzに変更しました。純正律・平均律の切り替えやその他の機能は従来どおりです。</p></div><div class="history-entry"><b>Ver. 11</b><p>音の選択ボタンに異名同音を併記。単音・構成音はドイツ音名、和音は英語のコードネームで表示します。選択した綴りはモード間で引き継ぎます。</p></div><div class="history-entry"><b>Ver. 10</b><p>異名同音を選んだ際の構成音について、ダブルシャープの表記を修正しました。全42パターンを照合しました。</p></div><div class="history-entry"><b>Ver. 9</b><p>異名同音の切り替えを追加しました。選んだ音名は長三和音・短三和音と構成音の表記にも反映されます。</p></div><div class="history-entry"><b>Ver. 8</b><p>Ges-mollの第3音の表記を「Heses」から「Bes」に修正しました。</p></div><div class="history-entry"><b>Ver. 7</b><p>構成音をドイツ音名に統一し、長三和音・短三和音の第3音と第5音を音楽理論に沿った綴りに修正しました。</p></div><div class="history-entry"><b>Ver. 6</b><p>画面右上のⓘから更新履歴を確認できるようにしました。</p></div><div class="history-entry"><b>Ver. 5</b><p>「音律を聴き比べる」ボタンを削除し、操作画面を整理しました。</p></div><div class="history-entry"><b>Ver. 4</b><p>単音・長3・短3の切り替え時に、再生中の音も即座に切り替わるよう改善しました。</p></div><p class="history-note">現在は試作品のため、音源は仮の電子音です。</p></dialog>
+<body><main class="app"><div class="topbar"><div class="badge">PROTOTYPE v17 · 更新履歴</div><div class="top-actions"><button type="button" id="refreshBtn" class="info-btn refresh-btn" aria-label="アプリを更新" title="アプリを更新">↻</button><button type="button" id="infoBtn" class="info-btn" aria-label="更新履歴とアプリ情報を表示" aria-haspopup="dialog">ⓘ</button></div></div><div class="now-row"><button id="now" class="now" aria-label="再生中の音。タップして停止"><div id="nowPitch" class="pitch">停止中</div><div id="nowSub" class="sub">音名を選んで再生 ／ 再生中はここをタップして停止</div></button><button id="enharmonic" class="enharmonic" type="button" hidden aria-label="異名同音に切り替え"></button></div><nav class="switches" aria-label="再生モード" id="modes"><button data-mode="single">単音</button><button data-mode="major">長3</button><button data-mode="minor">短3</button></nav><nav class="switches" aria-label="音律" id="tunings"><button data-tuning="just">純正律</button><button data-tuning="equal">平均律</button></nav><div id="audioStatus" role="status" aria-live="polite" style="font-size:13px;color:#ffd88b;min-height:1.4em;margin:4px 0"></div><label class="vol">音量 <input id="volume" type="range" min="0" max="100" value="45"><span id="volumeLabel">45%</span></label><div class="judge-controls"><button id="judgeToggle" type="button" aria-pressed="false">🎤 音程判定 OFF</button><span id="judgeStatus">マイク停止中</span></div><section id="judgePanel" class="judge-panel" hidden><div class="judge-pitch" id="judgePitch">演奏音を待っています</div><div class="judge-role" id="judgeRole">音を吹くと自動認識します</div><div class="judge-meter"><div class="judge-zero"></div><div id="judgeNeedle" class="judge-needle"></div></div><div class="judge-scale"><span>−50</span><span>0</span><span>＋50</span></div><div id="judgeCents" class="judge-cents">— cents</div><div id="judgeMessage" class="judge-message">マイクへのアクセスを許可してください</div></section><div class="section"><strong>音を選ぶ</strong><span>実音・全25音／異名同音を併記</span></div><div class="notes" id="notes"></div><div class="aux"><button id="componentBtn" aria-pressed="false">構成音を操作</button></div><div id="components" class="components"></div><details class="footer"><summary>試作品について</summary><p>これは操作確認用の試作品です。音源はA＝442 Hzを基準とするWeb Audio APIによる仮の電子音です。完成版では録音したWAV音源を使用します。音が鳴らない場合はOneDriveのプレビューではなくSafariで開いてください。iPhoneの消音モードや音量もご確認ください。音名の①②③は音域を示します。</p></details></main><dialog id="historyDialog" aria-labelledby="historyTitle"><div class="dialog-head"><strong id="historyTitle">更新履歴</strong><button id="closeHistory" type="button" aria-label="閉じる">×</button></div><div class="history-entry"><b>Ver. 17</b><p>音程判定の試験機能を追加。マイクから単音の高さを自動検出し、選択中の和音の構成音（または単音）の目標音程とのずれを表示します。判定中は音名グリッドを一時的に隠し、スクロールなしを維持します。スピーカーから再生する音を誤検出する可能性があるため、判定値は参考表示です。</p></div><div class="history-entry"><b>Ver. 16</b><p>スマートフォンのブラウザで更新操作が見つからない場合に備え、画面右上に更新ボタン（↻）を追加しました。更新時はキャッシュを避けるためURLに更新用の値を付けます。</p></div><div class="history-entry"><b>Ver. 15</b><p>スマートフォン横画面で下端のジェスチャー操作と干渉しないよう、音量バーを音名ボタンの上に移動しました。スクロール禁止とA＝442 Hzは維持しています。</p></div><div class="history-entry"><b>Ver. 14</b><p>縦・横画面ともスクロールを禁止し、横画面では25音のボタンが画面内に収まるよう配置を調整しました。</p></div><div class="history-entry"><b>Ver. 13</b><p>スマートフォン横向き表示で音名ボタンが重なってしまう問題を修正しました。画面が狭い場合はボタンの高さを確保し、ボタンの文字の重なりを軽減しました。</p></div><div class="history-entry"><b>Ver. 12</b><p>仮音源の基準ピッチをA＝440 HzからA＝442 Hzに変更しました。純正律・平均律の切り替えやその他の機能は従来どおりです。</p></div><div class="history-entry"><b>Ver. 11</b><p>音の選択ボタンに異名同音を併記。単音・構成音はドイツ音名、和音は英語のコードネームで表示します。選択した綴りはモード間で引き継ぎます。</p></div><div class="history-entry"><b>Ver. 10</b><p>異名同音を選んだ際の構成音について、ダブルシャープの表記を修正しました。全42パターンを照合しました。</p></div><div class="history-entry"><b>Ver. 9</b><p>異名同音の切り替えを追加しました。選んだ音名は長三和音・短三和音と構成音の表記にも反映されます。</p></div><div class="history-entry"><b>Ver. 8</b><p>Ges-mollの第3音の表記を「Heses」から「Bes」に修正しました。</p></div><div class="history-entry"><b>Ver. 7</b><p>構成音をドイツ音名に統一し、長三和音・短三和音の第3音と第5音を音楽理論に沿った綴りに修正しました。</p></div><div class="history-entry"><b>Ver. 6</b><p>画面右上のⓘから更新履歴を確認できるようにしました。</p></div><div class="history-entry"><b>Ver. 5</b><p>「音律を聴き比べる」ボタンを削除し、操作画面を整理しました。</p></div><div class="history-entry"><b>Ver. 4</b><p>単音・長3・短3の切り替え時に、再生中の音も即座に切り替わるよう改善しました。</p></div><p class="history-note">現在は試作品のため、音源は仮の電子音です。</p></dialog>
 <script>
 (()=>{'use strict';
 const en=['B♭','B','C','D♭','D','E♭','E','F','G♭','G','A♭','A'];
@@ -135,6 +143,7 @@ const sequence=Array.from({length:25},(_,i)=>({i,midi:46+i,band:i===24?3:i<12?1:
 const saved=(key,fallback)=>{try{return localStorage.getItem(key)||fallback}catch{return fallback}};
 let mode=saved('tone-mode','single'),tuning=saved('tone-tuning','just'),selected=null,component=false,parts=new Set([0,1,2]);
 let ctx=null,master=null,voices=[],generation=0;
+let judgeOn=false,micStream=null,micCtx=null,micSource=null,analyser=null,micBuffer=null,micFrame=0,judgeLast=0;
 function currentName(i){return spellings[i%12]||sequence[i].german}
 function rootLetter(name){return name==='B'||name==='Bes'?'H':name.startsWith('H')?'H':name[0]}
 const $=id=>document.getElementById(id);
@@ -197,6 +206,84 @@ $('tunings').onclick=e=>{let b=e.target.closest('[data-tuning]');if(!b||b.datase
 $('enharmonic').onclick=()=>{if(selected===null)return;const alts=alternatives[selected%12];if(!alts)return;const next=alts.find(x=>x!==currentName(selected));spellings[selected%12]=next;update()};
 $('now').onclick=()=>{if(selected!==null){selected=null;stopAudio();status('');update()}};
 $('componentBtn').onclick=()=>{component=!component;update()};
+// Detect a single sustained instrumental pitch via normalized autocorrelation.
+function detectPitch(buffer,sampleRate){
+ const n=buffer.length;let rms=0;for(let i=0;i<n;i++)rms+=buffer[i]*buffer[i];rms=Math.sqrt(rms/n);
+ if(rms<0.012)return null;
+ const minLag=Math.max(2,Math.floor(sampleRate/1200)),maxLag=Math.min(Math.floor(sampleRate/65),n/2);
+ let bestLag=0,bestScore=0;
+ for(let lag=minLag;lag<=maxLag;lag++){
+  let cross=0,a=0,b=0;
+  for(let i=0;i<n-lag;i+=2){const x=buffer[i],y=buffer[i+lag];cross+=x*y;a+=x*x;b+=y*y}
+  const score=cross/Math.sqrt(a*b+1e-12);
+  if(score>bestScore){bestScore=score;bestLag=lag}
+ }
+ if(bestScore<0.88||!bestLag)return null;
+ return {hz:sampleRate/bestLag,confidence:bestScore};
+}
+function targetFor(hz){
+ if(selected===null)return null;
+ const root=frequency(sequence[selected].midi);
+ const intervals=mode==='single'?[0]:mode==='major'?[0,4,7]:[0,3,7];
+ const candidates=[];
+ for(let j=0;j<intervals.length;j++){
+  const ratio=tuning==='equal'?Math.pow(2,intervals[j]/12):j===0?1:j===1?(mode==='major'?5/4:6/5):3/2;
+  const base=root*ratio;
+  // Allow octave displacement for transposing instruments / voicing, but label octave clearly.
+  for(let oct=-2;oct<=2;oct++){
+   const target=base*Math.pow(2,oct),cents=1200*Math.log2(hz/target);
+   candidates.push({j,oct,cents,target});
+  }
+ }
+ candidates.sort((a,b)=>Math.abs(a.cents)-Math.abs(b.cents));
+ return candidates[0];
+}
+function renderJudge(){
+ if(!judgeOn||!analyser)return;
+ micFrame=requestAnimationFrame(renderJudge);
+ const time=performance.now();if(time-judgeLast<110)return;judgeLast=time;
+ analyser.getFloatTimeDomainData(micBuffer);
+ const result=detectPitch(micBuffer,micCtx.sampleRate);
+ const pitch=$('judgePitch'),role=$('judgeRole'),centsEl=$('judgeCents'),msg=$('judgeMessage'),needle=$('judgeNeedle');
+ if(!result){pitch.textContent='演奏音を待っています';role.textContent='単音を吹いてください';centsEl.textContent='— cents';msg.textContent='再生音もマイクに入る場合があります';needle.style.left='50%';return}
+ const hz=result.hz;
+ const midi=Math.round(69+12*Math.log2(hz/442));
+ const note=de[((midi%12)+12)%12];
+ pitch.textContent=note+' · '+hz.toFixed(1)+' Hz';
+ const target=targetFor(hz);
+ if(!target){role.textContent='音名を選ぶと目標音程を判定できます';centsEl.textContent='— cents';msg.textContent='単音の高さを検出中';needle.style.left='50%';return}
+ const names=['根音','第3音','第5音'];
+ role.textContent=mode==='single'?'選択音との比較':names[target.j]+'との比較'+(target.oct===0?'':`（${target.oct>0?'+':''}${target.oct} oct）`);
+ const c=target.cents;
+ if(Math.abs(c)>60){centsEl.textContent='対象音から離れています';msg.textContent='選択中の和音の構成音を演奏してください';needle.style.left='50%';return}
+ centsEl.textContent=(c>=0?'+':'−')+Math.abs(c).toFixed(1)+' cents';
+ needle.style.left=(50+Math.max(-50,Math.min(50,c)))+'%';
+ msg.textContent=Math.abs(c)<=5?'目標音程に近い':c>0?'目標より高い':'目標より低い';
+}
+async function stopJudge(){
+ judgeOn=false;cancelAnimationFrame(micFrame);micFrame=0;
+ if(micSource){try{micSource.disconnect()}catch{}micSource=null}
+ if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}
+ if(micCtx){try{await micCtx.close()}catch{}micCtx=null}
+ analyser=null;micBuffer=null;
+ document.body.classList.remove('judging');$('judgePanel').hidden=true;
+ $('judgeToggle').classList.remove('active');$('judgeToggle').textContent='🎤 音程判定 OFF';$('judgeToggle').setAttribute('aria-pressed','false');$('judgeStatus').textContent='マイク停止中';
+}
+$('judgeToggle').onclick=async()=>{
+ if(judgeOn){await stopJudge();return}
+ if(!navigator.mediaDevices?.getUserMedia){$('judgeStatus').textContent='HTTPSのSafari等で開いてください';return}
+ $('judgeStatus').textContent='マイク許可を確認中…';
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});
+  micStream=stream;micCtx=new AudioContextClass();micSource=micCtx.createMediaStreamSource(stream);
+  analyser=micCtx.createAnalyser();analyser.fftSize=8192;analyser.smoothingTimeConstant=0;micSource.connect(analyser);
+  micBuffer=new Float32Array(analyser.fftSize);await micCtx.resume();
+  judgeOn=true;document.body.classList.add('judging');$('judgePanel').hidden=false;
+  $('judgeToggle').classList.add('active');$('judgeToggle').textContent='🎤 音程判定 ON';$('judgeToggle').setAttribute('aria-pressed','true');
+  $('judgeStatus').textContent='試験機能・再生音の誤検出に注意';renderJudge();
+ }catch(err){$('judgeStatus').textContent='マイクを利用できません（許可・設定を確認）';await stopJudge();$('judgeStatus').textContent='マイクを利用できません（許可・設定を確認）'}
+};
+window.addEventListener('pagehide',()=>{if(judgeOn)stopJudge()});
 $('refreshBtn').onclick=()=>{const url=new URL(window.location.href);url.searchParams.set('_refresh',String(Date.now()));window.location.replace(url.toString())};
 $('infoBtn').onclick=()=>{$('historyDialog').showModal()};
 $('closeHistory').onclick=()=>{$('historyDialog').close()};
