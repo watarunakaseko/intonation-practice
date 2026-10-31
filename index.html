@@ -125,9 +125,22 @@ html,body{overflow:hidden!important}
 .judge-message{font-size:11px;color:#c7d8e6;text-align:center}
 body.judging .notes,body.judging .section{display:none!important}
 @media(orientation:landscape){.judge-controls{min-height:21px}#judgeToggle{padding:2px 8px;font-size:10px}.judge-panel{padding:2px 12px;gap:1px}.judge-meter{height:20px;margin-top:3px}.judge-zero{height:100%;top:0}.judge-needle{height:28px;top:-4px}.judge-cents{font-size:16px}.judge-pitch{font-size:16px}.judge-role,.judge-message{font-size:9px}}
+
+.judge-needle[hidden],.judge-check[hidden]{display:none!important}
+.judge-check{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:27px;height:27px;border-radius:50%;background:#9affbd;color:#103c2d;font-size:20px;line-height:27px;font-weight:900;text-align:center;z-index:4;box-shadow:0 0 0 3px #112c29,0 0 12px #9affbd77;pointer-events:none}
+.judge-meter.is-waiting{background:#293747;border-color:#64788b}
+.judge-meter.is-waiting .judge-zero{opacity:.45}
+.judge-cents.in-tune{color:#a9ffcf}
+@media(orientation:landscape){.judge-check{width:21px;height:21px;font-size:16px;line-height:21px}}
+/* v24: compact judgement mode switch, visible only while microphone is enabled */
+.judge-mode-row{display:none;gap:5px;flex:0 0 auto;min-height:0}
+body.judging .judge-mode-row{display:flex}
+.judge-mode-row button{flex:1;min-width:0;border:1px solid #60758c;border-radius:8px;background:#243449;color:#d4e3f1;padding:5px 7px;font-size:12px;font-weight:700}
+.judge-mode-row button.selected{background:#126c78;color:#fff;border-color:#70d7d5}
+@media(orientation:landscape){.judge-mode-row button{font-size:10px;padding:2px 5px}}
 </style>
 </head>
-<body><main class="app"><div class="topbar"><div class="badge">PROTOTYPE v22 · 更新履歴</div><div class="top-actions"><button type="button" id="refreshBtn" class="info-btn refresh-btn" aria-label="アプリを更新" title="アプリを更新">↻</button><button type="button" id="infoBtn" class="info-btn" aria-label="更新履歴とアプリ情報を表示" aria-haspopup="dialog">ⓘ</button></div></div><div class="now-row"><button id="now" class="now" aria-label="選択中の音。タップして再生または停止"><div id="nowPitch" class="pitch">停止中</div><div id="nowSub" class="sub">音名を選んで再生・判定基準を設定</div></button><button id="enharmonic" class="enharmonic" type="button" hidden aria-label="異名同音に切り替え"></button></div><nav class="switches" aria-label="再生モード" id="modes"><button data-mode="single">単音</button><button data-mode="major">長3</button><button data-mode="minor">短3</button></nav><nav class="switches" aria-label="音律" id="tunings"><button data-tuning="just">純正律</button><button data-tuning="equal">平均律</button></nav><div id="audioStatus" role="status" aria-live="polite" style="font-size:13px;color:#ffd88b;min-height:1.4em;margin:4px 0"></div><label class="vol">音量 <input id="volume" type="range" min="0" max="100" value="45"><span id="volumeLabel">45%</span></label><div class="judge-controls"><button id="judgeToggle" type="button" aria-pressed="false">🎤 音程判定 OFF</button><span id="judgeStatus">マイク停止中</span></div><section id="judgePanel" class="judge-panel" hidden><div class="judge-pitch" id="judgePitch">演奏音を待っています</div><div class="judge-role" id="judgeRole">音を吹くと自動認識します</div><div class="judge-meter"><div class="judge-zero"></div><div id="judgeNeedle" class="judge-needle"></div></div><div class="judge-scale"><span>♭ 低い −50</span><span>±0</span><span>＋50 高い ♯</span></div><div id="judgeCents" class="judge-cents">— cents</div><div id="judgeMessage" class="judge-message">マイクへのアクセスを許可してください</div></section><div class="section"><strong>音を選ぶ</strong><span>実音・全25音／異名同音を併記</span></div><div class="notes" id="notes"></div><div class="aux"><button id="componentBtn" aria-pressed="false">構成音を操作</button></div><div id="components" class="components"></div><details class="footer"><summary>試作品について</summary><p>これは操作確認用の試作品です。音源はA＝442 Hzを基準とするWeb Audio APIによる仮の電子音です。完成版では録音したWAV音源を使用します。音が鳴らない場合はOneDriveのプレビューではなくSafariで開いてください。iPhoneの消音モードや音量もご確認ください。音名の①②③は音域を示します。</p></details></main><dialog id="historyDialog" aria-labelledby="historyTitle"><div class="dialog-head"><strong id="historyTitle">更新履歴</strong><button id="closeHistory" type="button" aria-label="閉じる">×</button></div><div class="history-entry"><b>Ver. 22</b><p>チューナーのメーターを中央基準の針式に変更。±0の基準線と±5セントの目標範囲を強調し、低い・高い方向を明示。針の表示遅延を短縮しました。</p></div><div class="history-entry"><b>Ver. 21</b><p>選択中の音・和音を保持したまま再生を停止可能に。無音時も選択した純正律・平均律の和音構成音を自動検出して判定。音を選択していない場合は従来のクロマチック判定を使用します。</p></div><div class="history-entry"><b>Ver. 20</b><p>基準音を再生していないときも、A＝442 Hzの平均律を基準に、最も近い音のセント差と針を表示するクロマチックチューナー機能を追加。和音再生中は従来の選択音律による判定を維持します。</p></div><div class="history-entry"><b>Ver. 19</b><p>音程判定の更新間隔を短縮し、周波数推定を軽量化。ラグの少ないセント表示と音名切り替えを目指し、音程変化に応じて表示の追従速度を調整しました。</p></div><div class="history-entry"><b>Ver. 18</b><p>マイクで検出した周波数からドイツ音名へ変換する際の基準位置を修正。B♭始まりの音名配列とMIDI番号の対応を統一しました（例：144.1 HzはCではなくDと表示）。</p></div><div class="history-entry"><b>Ver. 17</b><p>音程判定の試験機能を追加。マイクから単音の高さを自動検出し、選択中の和音の構成音（または単音）の目標音程とのずれを表示します。判定中は音名グリッドを一時的に隠し、スクロールなしを維持します。スピーカーから再生する音を誤検出する可能性があるため、判定値は参考表示です。</p></div><div class="history-entry"><b>Ver. 16</b><p>スマートフォンのブラウザで更新操作が見つからない場合に備え、画面右上に更新ボタン（↻）を追加しました。更新時はキャッシュを避けるためURLに更新用の値を付けます。</p></div><div class="history-entry"><b>Ver. 15</b><p>スマートフォン横画面で下端のジェスチャー操作と干渉しないよう、音量バーを音名ボタンの上に移動しました。スクロール禁止とA＝442 Hzは維持しています。</p></div><div class="history-entry"><b>Ver. 14</b><p>縦・横画面ともスクロールを禁止し、横画面では25音のボタンが画面内に収まるよう配置を調整しました。</p></div><div class="history-entry"><b>Ver. 13</b><p>スマートフォン横向き表示で音名ボタンが重なってしまう問題を修正しました。画面が狭い場合はボタンの高さを確保し、ボタンの文字の重なりを軽減しました。</p></div><div class="history-entry"><b>Ver. 12</b><p>仮音源の基準ピッチをA＝440 HzからA＝442 Hzに変更しました。純正律・平均律の切り替えやその他の機能は従来どおりです。</p></div><div class="history-entry"><b>Ver. 11</b><p>音の選択ボタンに異名同音を併記。単音・構成音はドイツ音名、和音は英語のコードネームで表示します。選択した綴りはモード間で引き継ぎます。</p></div><div class="history-entry"><b>Ver. 10</b><p>異名同音を選んだ際の構成音について、ダブルシャープの表記を修正しました。全42パターンを照合しました。</p></div><div class="history-entry"><b>Ver. 9</b><p>異名同音の切り替えを追加しました。選んだ音名は長三和音・短三和音と構成音の表記にも反映されます。</p></div><div class="history-entry"><b>Ver. 8</b><p>Ges-mollの第3音の表記を「Heses」から「Bes」に修正しました。</p></div><div class="history-entry"><b>Ver. 7</b><p>構成音をドイツ音名に統一し、長三和音・短三和音の第3音と第5音を音楽理論に沿った綴りに修正しました。</p></div><div class="history-entry"><b>Ver. 6</b><p>画面右上のⓘから更新履歴を確認できるようにしました。</p></div><div class="history-entry"><b>Ver. 5</b><p>「音律を聴き比べる」ボタンを削除し、操作画面を整理しました。</p></div><div class="history-entry"><b>Ver. 4</b><p>単音・長3・短3の切り替え時に、再生中の音も即座に切り替わるよう改善しました。</p></div><p class="history-note">現在は試作品のため、音源は仮の電子音です。</p></dialog>
+<body><main class="app"><div class="topbar"><div class="badge">PROTOTYPE v24 · 更新履歴</div><div class="top-actions"><button type="button" id="refreshBtn" class="info-btn refresh-btn" aria-label="アプリを更新" title="アプリを更新">↻</button><button type="button" id="infoBtn" class="info-btn" aria-label="更新履歴とアプリ情報を表示" aria-haspopup="dialog">ⓘ</button></div></div><div class="now-row"><button id="now" class="now" aria-label="選択中の音。タップして再生または停止"><div id="nowPitch" class="pitch">停止中</div><div id="nowSub" class="sub">音名を選んで再生・判定基準を設定</div></button><button id="enharmonic" class="enharmonic" type="button" hidden aria-label="異名同音に切り替え"></button></div><nav class="switches" aria-label="再生モード" id="modes"><button data-mode="single">単音</button><button data-mode="major">長3</button><button data-mode="minor">短3</button></nav><nav class="switches" aria-label="音律" id="tunings"><button data-tuning="just">純正律</button><button data-tuning="equal">平均律</button></nav><div id="audioStatus" role="status" aria-live="polite" style="font-size:13px;color:#ffd88b;min-height:1.4em;margin:4px 0"></div><label class="vol">音量 <input id="volume" type="range" min="0" max="100" value="45"><span id="volumeLabel">45%</span></label><div class="judge-controls"><button id="judgeToggle" type="button" aria-pressed="false">🎤 音程判定 OFF</button><span id="judgeStatus">マイク停止中</span></div><div id="judgeModeRow" class="judge-mode-row"><button id="judgeChromatic" type="button" aria-pressed="false">通常チューナー</button><button id="judgeSelected" type="button" aria-pressed="true">指定音・和音</button></div><section id="judgePanel" class="judge-panel" hidden><div class="judge-pitch" id="judgePitch">演奏音を待っています</div><div class="judge-role" id="judgeRole">音を吹くと自動認識します</div><div class="judge-meter"><div class="judge-zero"></div><div id="judgeNeedle" class="judge-needle" hidden></div><div id="judgeCheck" class="judge-check" hidden aria-label="音程が合っています">✓</div></div><div class="judge-scale"><span>♭ 低い −50</span><span>±0</span><span>＋50 高い ♯</span></div><div id="judgeCents" class="judge-cents">— cents</div><div id="judgeMessage" class="judge-message">マイクへのアクセスを許可してください</div></section><div class="section"><strong>音を選ぶ</strong><span>実音・全25音／異名同音を併記</span></div><div class="notes" id="notes"></div><div class="aux"><button id="componentBtn" aria-pressed="false">構成音を操作</button></div><div id="components" class="components"></div><details class="footer"><summary>試作品について</summary><p>これは操作確認用の試作品です。音源はA＝442 Hzを基準とするWeb Audio APIによる仮の電子音です。完成版では録音したWAV音源を使用します。音が鳴らない場合はOneDriveのプレビューではなくSafariで開いてください。iPhoneの消音モードや音量もご確認ください。音名の①②③は音域を示します。</p></details></main><dialog id="historyDialog" aria-labelledby="historyTitle"><div class="dialog-head"><strong id="historyTitle">更新履歴</strong><button id="closeHistory" type="button" aria-label="閉じる">×</button></div><div class="history-entry"><b>Ver. 24</b><p>判定モードに「通常チューナー」と「指定音・和音」を追加。音や和音を選択した後でも、A＝442 Hzの平均律による通常判定にワンタップで切り替え可能。再生状態や選択中の音・和音は維持します。</p></div><div class="history-entry"><b>Ver. 23</b><p>音を検出していないときは針を隠して「音を待っています」と表示。音程が±5セント以内で針を緑色にし、約0.25秒安定すると中央に✓を表示。中央で針が見えなくなる問題を改善しました。</p></div><div class="history-entry"><b>Ver. 22</b><p>チューナーのメーターを中央基準の針式に変更。±0の基準線と±5セントの目標範囲を強調し、低い・高い方向を明示。針の表示遅延を短縮しました。</p></div><div class="history-entry"><b>Ver. 21</b><p>選択中の音・和音を保持したまま再生を停止可能に。無音時も選択した純正律・平均律の和音構成音を自動検出して判定。音を選択していない場合は従来のクロマチック判定を使用します。</p></div><div class="history-entry"><b>Ver. 20</b><p>基準音を再生していないときも、A＝442 Hzの平均律を基準に、最も近い音のセント差と針を表示するクロマチックチューナー機能を追加。和音再生中は従来の選択音律による判定を維持します。</p></div><div class="history-entry"><b>Ver. 19</b><p>音程判定の更新間隔を短縮し、周波数推定を軽量化。ラグの少ないセント表示と音名切り替えを目指し、音程変化に応じて表示の追従速度を調整しました。</p></div><div class="history-entry"><b>Ver. 18</b><p>マイクで検出した周波数からドイツ音名へ変換する際の基準位置を修正。B♭始まりの音名配列とMIDI番号の対応を統一しました（例：144.1 HzはCではなくDと表示）。</p></div><div class="history-entry"><b>Ver. 17</b><p>音程判定の試験機能を追加。マイクから単音の高さを自動検出し、選択中の和音の構成音（または単音）の目標音程とのずれを表示します。判定中は音名グリッドを一時的に隠し、スクロールなしを維持します。スピーカーから再生する音を誤検出する可能性があるため、判定値は参考表示です。</p></div><div class="history-entry"><b>Ver. 16</b><p>スマートフォンのブラウザで更新操作が見つからない場合に備え、画面右上に更新ボタン（↻）を追加しました。更新時はキャッシュを避けるためURLに更新用の値を付けます。</p></div><div class="history-entry"><b>Ver. 15</b><p>スマートフォン横画面で下端のジェスチャー操作と干渉しないよう、音量バーを音名ボタンの上に移動しました。スクロール禁止とA＝442 Hzは維持しています。</p></div><div class="history-entry"><b>Ver. 14</b><p>縦・横画面ともスクロールを禁止し、横画面では25音のボタンが画面内に収まるよう配置を調整しました。</p></div><div class="history-entry"><b>Ver. 13</b><p>スマートフォン横向き表示で音名ボタンが重なってしまう問題を修正しました。画面が狭い場合はボタンの高さを確保し、ボタンの文字の重なりを軽減しました。</p></div><div class="history-entry"><b>Ver. 12</b><p>仮音源の基準ピッチをA＝440 HzからA＝442 Hzに変更しました。純正律・平均律の切り替えやその他の機能は従来どおりです。</p></div><div class="history-entry"><b>Ver. 11</b><p>音の選択ボタンに異名同音を併記。単音・構成音はドイツ音名、和音は英語のコードネームで表示します。選択した綴りはモード間で引き継ぎます。</p></div><div class="history-entry"><b>Ver. 10</b><p>異名同音を選んだ際の構成音について、ダブルシャープの表記を修正しました。全42パターンを照合しました。</p></div><div class="history-entry"><b>Ver. 9</b><p>異名同音の切り替えを追加しました。選んだ音名は長三和音・短三和音と構成音の表記にも反映されます。</p></div><div class="history-entry"><b>Ver. 8</b><p>Ges-mollの第3音の表記を「Heses」から「Bes」に修正しました。</p></div><div class="history-entry"><b>Ver. 7</b><p>構成音をドイツ音名に統一し、長三和音・短三和音の第3音と第5音を音楽理論に沿った綴りに修正しました。</p></div><div class="history-entry"><b>Ver. 6</b><p>画面右上のⓘから更新履歴を確認できるようにしました。</p></div><div class="history-entry"><b>Ver. 5</b><p>「音律を聴き比べる」ボタンを削除し、操作画面を整理しました。</p></div><div class="history-entry"><b>Ver. 4</b><p>単音・長3・短3の切り替え時に、再生中の音も即座に切り替わるよう改善しました。</p></div><p class="history-note">現在は試作品のため、音源は仮の電子音です。</p></dialog>
 <script>
 (()=>{'use strict';
 const en=['B♭','B','C','D♭','D','E♭','E','F','G♭','G','A♭','A'];
@@ -232,7 +245,7 @@ function detectPitch(buffer,sampleRate){
  return {hz:sampleRate/lag,confidence:bestScore};
 }
 function targetFor(hz){
- if(selected===null){
+ if(judgeMode==='chromatic'||selected===null){
   const midi=Math.round(69+12*Math.log2(hz/442));
   const target=frequency(midi);
   return {j:-1,oct:0,cents:1200*Math.log2(hz/target),target};
@@ -252,14 +265,29 @@ function targetFor(hz){
  candidates.sort((a,b)=>Math.abs(a.cents)-Math.abs(b.cents));
  return candidates[0];
 }
+let judgeInTuneSince=0;
+let judgeMode='selected';
+function updateJudgeMode(){
+ const chromatic=judgeMode==='chromatic';
+ $('judgeChromatic').classList.toggle('selected',chromatic);
+ $('judgeSelected').classList.toggle('selected',!chromatic);
+ $('judgeChromatic').setAttribute('aria-pressed',String(chromatic));
+ $('judgeSelected').setAttribute('aria-pressed',String(!chromatic));
+ $('judgeRole').textContent=chromatic?'通常チューナー · 平均律 A＝442 Hz':'指定した音・和音を基準に判定';
+ judgeSmoothedHz=null;judgeMisses=0;judgeInTuneSince=0;
+ $('judgeNeedle').hidden=true;$('judgeCheck').hidden=true;
+}
+$('judgeChromatic').onclick=()=>{judgeMode='chromatic';updateJudgeMode()};
+$('judgeSelected').onclick=()=>{judgeMode='selected';updateJudgeMode()};
 function renderJudge(){
  if(!judgeOn||!analyser)return;
  micFrame=requestAnimationFrame(renderJudge);
  const time=performance.now();if(time-judgeLast<45)return;judgeLast=time;
  analyser.getFloatTimeDomainData(micBuffer);
  const result=detectPitch(micBuffer,micCtx.sampleRate);
- const pitch=$('judgePitch'),role=$('judgeRole'),centsEl=$('judgeCents'),msg=$('judgeMessage'),needle=$('judgeNeedle');
- if(!result){judgeMisses++;if(judgeMisses<3)return;judgeSmoothedHz=null;pitch.textContent='演奏音を待っています';role.textContent='単音を吹いてください';centsEl.textContent='— cents';msg.textContent='再生音もマイクに入る場合があります';needle.style.left='50%';needle.classList.remove('in-tune');return}
+ const pitch=$('judgePitch'),role=$('judgeRole'),centsEl=$('judgeCents'),msg=$('judgeMessage'),needle=$('judgeNeedle'),check=$('judgeCheck'),meter=needle.parentElement;
+ const clearIndicator=()=>{needle.hidden=true;check.hidden=true;judgeInTuneSince=0;centsEl.classList.remove('in-tune');meter.classList.add('is-waiting')};
+ if(!result){judgeMisses++;if(judgeMisses<3)return;judgeSmoothedHz=null;pitch.textContent='演奏音を待っています';role.textContent='単音を吹いてください';centsEl.textContent='— cents';msg.textContent='再生音もマイクに入る場合があります';clearIndicator();return}
  judgeMisses=0;
  const rawHz=result.hz;
  // Fast attack for genuine changes, modest smoothing for tiny fluctuations.
@@ -274,13 +302,16 @@ function renderJudge(){
  const note=de[((midi-46)%12+12)%12];
  pitch.textContent=note+' · '+hz.toFixed(1)+' Hz';
  const target=targetFor(hz);
- if(!target){role.textContent='測定中';centsEl.textContent='— cents';needle.style.left='50%';needle.classList.remove('in-tune');return}
+ if(!target){role.textContent='測定中';centsEl.textContent='— cents';clearIndicator();return}
  const names=['根音','第3音','第5音'];
- role.textContent=target.j===-1?'平均律 A＝442 Hz を基準':mode==='single'?'選択音との比較':names[target.j]+'との比較'+(target.oct===0?'':`（${target.oct>0?'+':''}${target.oct} oct）`);
+ role.textContent=target.j===-1?'通常チューナー · 平均律 A＝442 Hz を基準':mode==='single'?'選択音との比較':names[target.j]+'との比較'+(target.oct===0?'':`（${target.oct>0?'+':''}${target.oct} oct）`);
  const c=target.cents;
- if(Math.abs(c)>60){centsEl.textContent='対象音から離れています';msg.textContent='選択中の和音の構成音を演奏してください';needle.style.left='50%';needle.classList.remove('in-tune');return}
+ if(Math.abs(c)>60){centsEl.textContent='対象音から離れています';msg.textContent='選択中の和音の構成音を演奏してください';clearIndicator();return}
  centsEl.textContent=(c>=0?'+':'−')+Math.abs(c).toFixed(1)+' cents';
- needle.style.left=(50+Math.max(-50,Math.min(50,c)))+'%';needle.classList.toggle('in-tune',Math.abs(c)<=5);
+ needle.hidden=false;meter.classList.remove('is-waiting');
+ needle.style.left=(50+Math.max(-50,Math.min(50,c)))+'%';
+ const inTune=Math.abs(c)<=5;needle.classList.toggle('in-tune',inTune);centsEl.classList.toggle('in-tune',inTune);
+ if(inTune){if(!judgeInTuneSince)judgeInTuneSince=time;check.hidden=(time-judgeInTuneSince)<250}else{judgeInTuneSince=0;check.hidden=true}
  msg.textContent=Math.abs(c)<=5?'目標音程に近い':c>0?'目標より高い':'目標より低い';
 }
 async function stopJudge(){
@@ -288,7 +319,7 @@ async function stopJudge(){
  if(micSource){try{micSource.disconnect()}catch{}micSource=null}
  if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}
  if(micCtx){try{await micCtx.close()}catch{}micCtx=null}
- analyser=null;micBuffer=null;judgeSmoothedHz=null;judgeMisses=0;
+ analyser=null;micBuffer=null;judgeSmoothedHz=null;judgeMisses=0;judgeInTuneSince=0;$('judgeNeedle').hidden=true;$('judgeCheck').hidden=true;
  document.body.classList.remove('judging');$('judgePanel').hidden=true;
  $('judgeToggle').classList.remove('active');$('judgeToggle').textContent='🎤 音程判定 OFF';$('judgeToggle').setAttribute('aria-pressed','false');$('judgeStatus').textContent='マイク停止中';
 }
@@ -301,9 +332,9 @@ $('judgeToggle').onclick=async()=>{
   micStream=stream;micCtx=new AudioContextClass();micSource=micCtx.createMediaStreamSource(stream);
   analyser=micCtx.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=0;micSource.connect(analyser);
   micBuffer=new Float32Array(analyser.fftSize);await micCtx.resume();
-  judgeSmoothedHz=null;judgeMisses=0;judgeLast=0;judgeOn=true;document.body.classList.add('judging');$('judgePanel').hidden=false;
+  judgeSmoothedHz=null;judgeMisses=0;judgeLast=0;judgeOn=true;document.body.classList.add('judging');$('judgePanel').hidden=false;$('judgeNeedle').hidden=true;$('judgeCheck').hidden=true;$('judgeNeedle').parentElement.classList.add('is-waiting');
   $('judgeToggle').classList.add('active');$('judgeToggle').textContent='🎤 音程判定 ON';$('judgeToggle').setAttribute('aria-pressed','true');
-  $('judgeStatus').textContent='試験機能・再生音の誤検出に注意';renderJudge();
+  $('judgeStatus').textContent='試験機能・再生音の誤検出に注意';updateJudgeMode();renderJudge();
  }catch(err){$('judgeStatus').textContent='マイクを利用できません（許可・設定を確認）';await stopJudge();$('judgeStatus').textContent='マイクを利用できません（許可・設定を確認）'}
 };
 window.addEventListener('pagehide',()=>{if(judgeOn)stopJudge()});
@@ -312,6 +343,6 @@ $('infoBtn').onclick=()=>{$('historyDialog').showModal()};
 $('closeHistory').onclick=()=>{$('historyDialog').close()};
 $('historyDialog').onclick=e=>{if(e.target===$('historyDialog'))$('historyDialog').close()};
 $('volume').oninput=e=>{let val=Number(e.target.value);$('volumeLabel').textContent=val+'%';if(master&&ctx)master.gain.setTargetAtTime(val/100*.35,ctx.currentTime,.01)};
-update();
+update();updateJudgeMode();
 })();
 </script></body></html>
