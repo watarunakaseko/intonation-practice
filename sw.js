@@ -1,5 +1,5 @@
 /* Intonation Practice v35: network-first HTML navigation, offline fallback. */
-const CACHE_NAME = 'intonation-nav-v39';
+const CACHE_NAME = 'intonation-nav-v40';
 self.addEventListener('install', event => { self.skipWaiting(); });
 self.addEventListener('activate', event => {
  event.waitUntil((async () => {
