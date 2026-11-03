@@ -163,13 +163,13 @@ let mode=saved('tone-mode','single'),tuning=saved('tone-tuning','just'),selected
 let ctx=null,master=null,voices=[],generation=0;
 // B♭② (sequence index 12 / MIDI 58): HD-300 Brass sample, A=442 Hz.
 const brassNames=['Bb_1','H_1','C_1','Des_1','D_1','Es_1','E_1','F_1','Ges_1','G_1','As_1','A_1','Bb_2','H_2','C_2','Des_2','D_2','Es_2','E_2','F_2','Ges_2','G_2','As_2','A_2','Bb_3'];
-const samplePaths={brass:'./sounds/brass/Bb_2_brass_loop_v2.wav',clarinet:'./sounds/clarinet/Bb_2_clarinet_loop.wav',flute:'./sounds/flute/Bb_2_flute_loop.wav'};
+const samplePaths={brass:'./sounds/brass/Bb_2_brass_loop.wav',clarinet:'./sounds/clarinet/Bb_2_clarinet_loop.wav',flute:'./sounds/flute/Bb_2_flute_loop.wav'};
 const sampleBuffers={};
 const sampleLoading={};
 let timbre=saved('tone-timbre','brass');
 if(!['sine','brass','clarinet','flute'].includes(timbre))timbre='brass';
 function samplePath(name,index){
- if(name==='brass')return './sounds/brass/'+(index===12?'Bb_2_brass_loop_v2.wav':brassNames[index]+'_brass_loop.wav');
+ if(name==='brass')return './sounds/brass/'+(index===12?'Bb_2_brass_loop.wav':brassNames[index]+'_brass_loop.wav');
  return index===12?samplePaths[name]:null;
 }
 function loadSample(path){
